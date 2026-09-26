@@ -146,7 +146,7 @@
   </header>
 
   <nav class="nav" aria-label="Sections"><span class="d">$ ls /</span>
-    <a href="#whoami">whoami/</a><a href="#metrics">metrics/</a><a href="#migration">runbooks/</a><a href="#experience">career/</a><a href="#systems">systems/</a><a href="#now">wip/</a><a href="#oncall">pager/</a><a href="#stack">stack/</a><a href="#repos">repos/</a><a href="#contact">contact/</a><a href="#shell">shell</a>
+    <a href="#whoami">whoami/</a><a href="#metrics">metrics/</a><a href="#migration">runbooks/</a><a href="#experience">career/</a><a href="#systems">systems/</a><a href="#now">wip/</a><a href="#oncall">pager/</a><a href="#stack">stack/</a><a href="#contact">contact/</a><a href="#shell">shell</a>
     <span class="d hint">press <kbd>/</kbd> for the shell</span>
   </nav>
 
@@ -318,31 +318,6 @@
     </table></div>
   </section>
 
-  <section id="repos" aria-labelledby="h-repos">
-    <p class="cmd" id="h-repos"><span class="ps">$</span> gh repo list <span class="path">eshanpandey</span> | grep <input id="repofilter" type="text" placeholder="filter…" spellcheck="false" autocomplete="off" aria-label="Filter repositories"></p>
-    <div class="tbl"><table>
-      <thead><tr><th>REPO</th><th>LAST PUSH</th><th>NOTES</th></tr></thead>
-      <tbody id="repobody">
-        <tr data-name="video_summarizer"><td><a href="https://github.com/eshanpandey/Video_Summarizer" target="_blank" rel="noopener">Video_Summarizer</a></td><td class="d">2024</td><td>AI summaries of video transcripts (see projects)</td></tr>
-        <tr data-name="cryptoballot"><td><a href="https://github.com/eshanpandey/CryptoBallot" target="_blank" rel="noopener">CryptoBallot</a></td><td class="d">2023</td><td>smart-contract voting protocol (see projects)</td></tr>
-        <tr data-name="chatapp"><td><a href="https://github.com/eshanpandey/chatapp" target="_blank" rel="noopener">chatapp</a></td><td class="d">2024</td><td></td></tr>
-        <tr data-name="telegram-bot"><td><a href="https://github.com/eshanpandey/Telegram-Bot" target="_blank" rel="noopener">Telegram-Bot</a></td><td class="d">2024</td><td></td></tr>
-        <tr data-name="fast_api_usecases"><td><a href="https://github.com/eshanpandey/Fast_API_Usecases" target="_blank" rel="noopener">Fast_API_Usecases</a></td><td class="d">2024</td><td></td></tr>
-        <tr data-name="url-shortener"><td><a href="https://github.com/eshanpandey/Url-Shortener" target="_blank" rel="noopener">Url-Shortener</a></td><td class="d">2024</td><td></td></tr>
-        <tr data-name="gemini-chatbot"><td><a href="https://github.com/eshanpandey/Gemini-ChatBot" target="_blank" rel="noopener">Gemini-ChatBot</a></td><td class="d">2024</td><td></td></tr>
-        <tr data-name="django-rest-api"><td><a href="https://github.com/eshanpandey/Django-REST-API" target="_blank" rel="noopener">Django-REST-API</a></td><td class="d">2023</td><td></td></tr>
-        <tr data-name="netprime-django"><td><a href="https://github.com/eshanpandey/NetPrime-Django" target="_blank" rel="noopener">NetPrime-Django</a></td><td class="d">2024</td><td></td></tr>
-        <tr data-name="flask-weather"><td><a href="https://github.com/eshanpandey/Flask-Weather" target="_blank" rel="noopener">Flask-Weather</a></td><td class="d">2024</td><td></td></tr>
-        <tr data-name="rails_server_1"><td><a href="https://github.com/eshanpandey/Rails_Server_1" target="_blank" rel="noopener">Rails_Server_1</a></td><td class="d">2025</td><td></td></tr>
-        <tr data-name="cdk_demo"><td><a href="https://github.com/eshanpandey/cdk_demo" target="_blank" rel="noopener">cdk_demo</a></td><td class="d">2025</td><td></td></tr>
-        <tr data-name="neetcode-submissions"><td><a href="https://github.com/eshanpandey/neetcode-submissions" target="_blank" rel="noopener">neetcode-submissions</a></td><td class="d">2026</td><td>DSA practice</td></tr>
-        <tr data-name="cryptowallet"><td><a href="https://github.com/eshanpandey/CryptoWallet" target="_blank" rel="noopener">CryptoWallet</a></td><td class="d">2023</td><td></td></tr>
-        <tr data-name="ethereum-todolist"><td><a href="https://github.com/eshanpandey/Ethereum-TodoList" target="_blank" rel="noopener">Ethereum-TodoList</a></td><td class="d">2022</td><td></td></tr>
-      </tbody>
-    </table></div>
-    <p class="d" id="repocount" style="margin:0;font-size:12px"></p>
-  </section>
-
   <section id="log" aria-labelledby="h-log">
     <p class="cmd" id="h-log"><span class="ps">$</span> tail <span class="path">/var/log/eshan/events.log</span></p>
 <pre class="out wrap"><span class="d">2025</span> <span class="n">AWARD</span>  Bravo Award for the critical AWS → GCP migration, delivered in 10 days
@@ -402,10 +377,6 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
   .toggle button[data-inc]:hover{background:var(--red);color:var(--bg)}
   .toggle button:disabled{opacity:.45;cursor:wait}
   [hidden]{display:none!important}
-  #repofilter{font:14px var(--mono);background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:1px 8px;width:12ch;caret-color:var(--amber)}
-  #repofilter:focus{border-color:var(--amber);outline:none}
-  #repobody td:first-child a{color:var(--amber);border-color:transparent}
-  #repobody td:first-child a:hover{border-color:var(--amber)}
   .flash{animation:flash 1.2s ease-out}
   @keyframes flash{from{background:color-mix(in srgb,var(--amber) 22%,transparent)}}
 </style>
@@ -443,7 +414,6 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
   systems      superlive architecture + strategy demo
   now          what I'm building now
   incident     page me (api | db | deploy)
-  repos        public github repos
   cd &lt;dir&gt;     jump to a section (see ls)
   leetcode     problem-solving profile
   contact      how to reach me
@@ -472,10 +442,9 @@ leetcode <a href="https://leetcode.com/u/03_Eshan/" target="_blank" rel="noopene
 strategy pattern demo below it. scrolled you there.`; },
     now: () => { go('now'); return `(WIP) natural-language course discovery: RAG over embeddings in AlloyDB`; },
     incident: (a) => { const k = INC[a] ? a : 'api'; go('oncall'); runIncident(k); return `paging eshan (simulation: ${k}). watch the pager section.`; },
-    repos: () => { go('repos'); return `${rows.length} public repos listed. type in the grep box to filter.`; },
     cd: (a) => { const id = {'/':'whoami','~':'whoami',career:'experience',runbooks:'migration',wip:'now',pager:'oncall'}[a] || a; if (a && document.getElementById(id)) { go(id); return `<span class="d">cd /${esc(a)}</span>`; } return `<span class="r">cd: no such section: ${esc(a || '')}</span> <span class="d">(try ls)</span>`; },
     sudo: () => `<span class="r">guest is not in the sudoers file. This incident will be reported.</span>`,
-    ls: () => `whoami/  metrics/  runbooks/  career/  systems/  wip/  pager/  stack/  projects/  repos/  offhours/  contact/  shell/`,
+    ls: () => `whoami/  metrics/  runbooks/  career/  systems/  wip/  pager/  stack/  projects/  offhours/  contact/  shell/`,
     offhours: () => `<span class="k">games</span>  Skyrim, James Bond
 <span class="k">books</span>  reading whenever I can`,
     exit: () => `<span class="d">there is no exit. only on-call.</span>`,
@@ -561,15 +530,6 @@ strategy pattern demo below it. scrolled you there.`; },
   };
   incBtns.forEach(b => b.addEventListener('click', () => runIncident(b.dataset.inc)));
 
-  // repo filter
-  const rf = document.getElementById('repofilter'), rc = document.getElementById('repocount');
-  const rows = [...document.querySelectorAll('#repobody tr')];
-  const filterRepos = () => {
-    const q = rf.value.trim().toLowerCase(); let n = 0;
-    rows.forEach(r => { const hit = !q || r.dataset.name.includes(q); r.hidden = !hit; if (hit) n++; });
-    rc.textContent = n + ' of ' + rows.length + ' repos';
-  };
-  rf.addEventListener('input', filterRepos); filterRepos();
 
   // "/" focuses the shell
   document.addEventListener('keydown', e => {
