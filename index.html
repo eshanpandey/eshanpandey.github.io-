@@ -49,7 +49,8 @@
 
   main{max-width:920px;margin:0 auto;display:grid;gap:44px;padding-top:36px}
 
-  .banner{color:var(--amber);font-size:clamp(5px,1.35vw,11px);line-height:1.15;font-weight:800;margin:0;overflow-x:auto}
+  .boot{margin:0;font:12.5px/1.7 var(--mono);color:var(--fg);overflow-x:auto;white-space:pre}
+  .boot > *{animation:none}
   h1{font-size:clamp(28px,6vw,52px);line-height:1.05;margin:14px 0 6px;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
   h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--amber);vertical-align:-.08em;margin-left:.12em;animation:blink 1.1s steps(1) infinite}
   @keyframes blink{50%{opacity:0}}
@@ -135,13 +136,11 @@
 
 <main>
   <header>
-<pre class="banner" aria-hidden="true">
- ███████╗███████╗██╗  ██╗ █████╗ ███╗   ██╗
- ██╔════╝██╔════╝██║  ██║██╔══██╗████╗  ██║
- █████╗  ███████╗███████║███████║██╔██╗ ██║
- ██╔══╝  ╚════██║██╔══██║██╔══██║██║╚██╗██║
- ███████╗███████║██║  ██║██║  ██║██║ ╚████║
- ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝</pre>
+<pre class="boot" aria-hidden="true"><span class="d">[    0.000]</span> booting <span class="k">eshan.service</span> on blr-prod-01
+<span class="d">[</span><span class="s">  OK  </span><span class="d">]</span> Migrated <span class="k">mysql</span> → <span class="k">postgresql</span> via CDC
+<span class="d">[</span><span class="s">  OK  </span><span class="d">]</span> Moved workloads <span class="k">aws</span> → <span class="k">gcp</span> in 10 days
+<span class="d">[</span><span class="s">  OK  </span><span class="d">]</span> Started <span class="k">livekit-recorder.service</span>
+<span class="d">[</span><span class="s">  OK  </span><span class="d">]</span> Reached target <span class="n">on-call.target</span></pre>
     <h1>Eshan Pandey<span class="cur"></span></h1>
     <p class="tag">Platform &amp; backend engineer. <em>3 years</em> running production infrastructure on <em>AWS and GCP</em>. I migrate databases, move clouds, and keep live video streaming up. Go and Ruby on Rails, Kubernetes underneath.</p>
   </header>
