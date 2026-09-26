@@ -174,24 +174,48 @@
 <span class="k">eshan_incident_response_reduction_percent</span>{src=<span class="s">"cloudwatch"</span>} <span class="n">40</span>
 <span class="k">eshan_cloud_migration_window_days</span>{from=<span class="s">"aws"</span>,to=<span class="s">"gcp"</span>}  <span class="n">10</span>
 <span class="k">eshan_db_migrations_total</span>{from=<span class="s">"mysql"</span>,to=<span class="s">"postgres"</span>} <span class="n">1</span>
+<span class="k">eshan_db_cutover_window_hours</span>{db=<span class="s">"core"</span>}           <span class="n">3</span>
 <span class="k">eshan_gas_reduction_percent</span>{contract=<span class="s">"cryptoballot"</span>}    <span class="n">25</span>
 <span class="k">eshan_awards_total</span>{name=<span class="s">"bravo"</span>,year=<span class="s">"2025"</span>}          <span class="n">1</span></pre>
   </section>
 
   <section id="migration" aria-labelledby="h-migration">
-    <p class="cmd" id="h-migration"><span class="ps">$</span> cat <span class="path">runbooks/mysql-to-postgres.md</span> <span class="c"># core app DB, planned and cut over solo</span></p>
+    <p class="cmd" id="h-migration"><span class="ps">$</span> cat <span class="path">docs/adr/mysql-to-postgresql.md</span> <span class="c"># core app DB, planned and cut over solo</span></p>
+<pre class="out wrap adr"><span class="n"># ADR: move the core database from MySQL to PostgreSQL</span>
+<span class="k">status</span>  <span class="s">accepted · shipped</span>
+<span class="k">owner</span>   eshan (schema design → production cutover)
+
+<span class="n">## why</span>
+The roadmap called for AI-powered search: vector embeddings for natural-language
+course discovery. The target was <span class="b">AlloyDB</span>, Google's PostgreSQL-compatible database,
+which stores embeddings and runs vector search right next to the app data.
+Getting there meant getting the core database off MySQL and onto PostgreSQL first.
+
+<span class="n">## decision</span>
+Migrate the core application database to PostgreSQL. Keep MySQL and PostgreSQL
+in sync with a real-time CDC pipeline, validate the data before switching, and
+cut production over inside a single <span class="n">3-hour window</span>.
+
+<span class="n">## consequences</span>
+<span class="s">+</span> clears the path to AlloyDB embeddings and RAG course discovery <span class="d">(see wip/)</span>
+<span class="s">+</span> better performance, reliability and long-term scalability
+<span class="r">-</span> heterogeneous migration: two engines, different types and SQL, synced live</pre>
+
+    <p class="cmd"><span class="ps">$</span> stat <span class="path">pipeline/cdc</span> <span class="c"># how both databases stayed in step</span></p>
     <div class="pipe" data-pipe aria-label="CDC pipeline, click a stage for details">
       <button type="button" class="node src" data-info="MySQL: the core application database, source of truth until cutover."><small>source</small>MySQL</button><span class="arrow" aria-hidden="true">──▶</span>
       <button type="button" class="node" data-info="DataStream: captures every change on MySQL in real time (change data capture)."><small>cdc</small>DataStream</button><span class="arrow" aria-hidden="true">──▶</span>
       <button type="button" class="node" data-info="Dataflow: processes the change stream on its way to the new database."><small>transform</small>Dataflow</button><span class="arrow" aria-hidden="true">──▶</span>
       <button type="button" class="node" data-info="Pub/Sub: carries the change events between stages."><small>bus</small>Pub/Sub</button><span class="arrow" aria-hidden="true">──▶</span>
-      <button type="button" class="node dst" data-info="PostgreSQL: the new home, kept in sync until production cutover with minimal downtime."><small>target</small>PostgreSQL</button>
+      <button type="button" class="node dst" data-info="PostgreSQL: the new home, kept in sync and validated until the 3-hour production cutover."><small>target</small>PostgreSQL</button>
     </div>
     <p class="detail" aria-live="polite"><span class="d">›</span> click a stage to inspect it</p>
-<pre class="out wrap"><span class="d">[1/4]</span> schema design for PostgreSQL
-<span class="d">[2/4]</span> real-time CDC sync so both databases stay in step during the move
-<span class="d">[3/4]</span> production cutover with <span class="s">minimal downtime</span>
-<span class="d">[4/4]</span> <span class="s">done</span>: better performance, reliability and long-term scalability</pre>
+    <p class="cmd"><span class="ps">$</span> ./migrate --from <span class="path">mysql</span> --to <span class="path">postgresql</span> <button type="button" id="migrun" class="runbtn">[ run ]</button> <span class="c"># replay the phases</span></p>
+<pre class="out wrap" id="miglog" aria-live="polite"><span class="d">[1/5]</span> schema design for PostgreSQL
+<span class="d">[2/5]</span> real-time CDC sync so both databases stay in step during the move
+<span class="d">[3/5]</span> data checks and sanity validation between MySQL and PostgreSQL
+<span class="d">[4/5]</span> production cutover inside a <span class="n">3-hour window</span>
+<span class="d">[5/5]</span> <span class="s">done</span>: path to AlloyDB + vector embeddings is open</pre>
   </section>
 
   <section id="experience" aria-labelledby="h-exp">
@@ -380,6 +404,11 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
   .flash{animation:flash 1.2s ease-out}
   @keyframes flash{from{background:color-mix(in srgb,var(--amber) 22%,transparent)}}
 </style>
+<style>
+  .runbtn{font:13px var(--mono);font-weight:600;color:var(--green);background:none;border:1px solid var(--green);border-radius:3px;padding:0 8px;cursor:pointer}
+  .runbtn:hover,.runbtn:focus-visible{background:var(--green);color:var(--bg)}
+  .runbtn:disabled{opacity:.45;cursor:wait}
+</style>
 <style>.copybtn{font:12px var(--mono);background:none;border:0;color:var(--dim);cursor:pointer;padding:0}.copybtn:hover,.copybtn:focus-visible{color:var(--amber)}</style>
 <script>
 (() => {
@@ -426,7 +455,7 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
 <span class="k">data</span>    postgres mysql alloydb redis opensearch kafka pubsub
 <span class="k">rt</span>      webrtc livekit sfu
 <span class="k">ai</span>      rag embeddings vector-search claude-api`,
-    migrations: () => `<span class="s">✔</span> mysql → postgresql   (core app db, CDC via DataStream/Dataflow/Pub/Sub)
+    migrations: () => `<span class="s">✔</span> mysql → postgresql   (core app db via CDC, validated, 3h cutover, for AlloyDB embeddings)
 <span class="s">✔</span> aws → gcp            (opensearch + lambda, 10-day window, Bravo Award)
 <span class="s">✔</span> vms → gke            (services + async workers, helm)`,
     oncall: () => `incidents handled: API downtime, database issues, failed deploys
@@ -504,8 +533,39 @@ strategy pattern demo below it. scrolled you there.`; },
     provout.classList.remove('flash'); void provout.offsetWidth; provout.classList.add('flash');
   }));
 
-  // incident simulator
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // migration replay
+  const MIG = [
+    ['schema', 'designing PostgreSQL schema from the MySQL source'],
+    ['cdc sync', 'DataStream → Dataflow → Pub/Sub streaming every change into PostgreSQL'],
+    ['validate', 'data checks and sanity checks: MySQL and PostgreSQL agree'],
+    ['cutover', 'production switched to PostgreSQL inside a 3-hour window'],
+    ['done', 'core DB on PostgreSQL. next stop: AlloyDB + vector embeddings'],
+  ];
+  const miglog = document.getElementById('miglog'), migrun = document.getElementById('migrun');
+  migrun.addEventListener('click', () => {
+    migrun.disabled = true; miglog.innerHTML = '';
+    const lines = [];
+    const draw = (i, pct) => {
+      const w = 20, fill = Math.round(pct / 100 * w);
+      const bar = '<span class="s">' + '■'.repeat(fill) + '</span><span class="d">' + '□'.repeat(w - fill) + '</span>';
+      miglog.innerHTML = lines.join('\n') + (i < MIG.length ? (lines.length ? '\n' : '') + '<span class="d">[' + (i + 1) + '/' + MIG.length + ']</span> ' + bar + ' ' + String(pct).padStart(3) + '%  <span class="n">' + MIG[i][0] + '</span>' : '');
+    };
+    let i = 0, pct = 0;
+    const step = () => {
+      if (i >= MIG.length) { migrun.disabled = false; return; }
+      pct = reduce ? 100 : Math.min(100, pct + 10);
+      draw(i, pct);
+      if (pct === 100) {
+        lines.push('<span class="d">[' + (i + 1) + '/' + MIG.length + ']</span> <span class="s">✔</span> <span class="n">' + MIG[i][0].padEnd(9) + '</span>' + MIG[i][1]);
+        i++; pct = 0; draw(i, 0);
+      }
+      setTimeout(step, reduce ? 0 : 70);
+    };
+    step();
+  });
+
+  // incident simulator
   const INC = {
     api: [['r','FIRING','5xx rate spiking on public API, customers seeing errors'],['n','ACK','eshan acknowledged the page'],['k','DIAG','checking dashboards and recent deploys'],['k','DIAG','isolated the failing service'],['s','MITIGATE','traffic restored'],['s','RESOLVED','API healthy. writing up what happened']],
     db: [['r','FIRING','database latency climbing, queries timing out'],['n','ACK','eshan acknowledged the page'],['k','DIAG','inspecting slow queries and connections'],['s','MITIGATE','load relieved, latency back to normal'],['s','RESOLVED','database healthy. follow-up ticket filed']],
