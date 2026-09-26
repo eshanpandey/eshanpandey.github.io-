@@ -272,6 +272,7 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
     <p class="cmd" id="h-contact"><span class="ps">$</span> cat <span class="path">~/.contact</span></p>
 <pre class="out wrap"><span class="k">email</span>   <span id="email">pandeyeshan13@gmail.com</span>  <button type="button" id="copy" class="copybtn">[copy]</button>
 <span class="k">github</span>  <a href="https://github.com/eshanpandey" target="_blank" rel="noopener">github.com/eshanpandey</a>
+<span class="k">leetcode</span> <a href="https://leetcode.com/u/03_Eshan/" target="_blank" rel="noopener">leetcode.com/u/03_Eshan</a>
 <span class="k">based</span>   Bangalore, India</pre>
   </section>
 
@@ -284,7 +285,7 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
         <input id="cmd" type="text" spellcheck="false" autocapitalize="off" aria-label="Command">
       </form>
       <div class="chips" id="chips">
-        <button type="button">help</button><button type="button">whoami</button><button type="button">stack</button><button type="button">migrations</button><button type="button">oncall</button><button type="button">projects</button><button type="button">offhours</button><button type="button">contact</button><button type="button">clear</button>
+        <button type="button">help</button><button type="button">whoami</button><button type="button">stack</button><button type="button">migrations</button><button type="button">oncall</button><button type="button">projects</button><button type="button">offhours</button><button type="button">leetcode</button><button type="button">contact</button><button type="button">clear</button>
       </div>
     </div>
   </section>
@@ -326,6 +327,7 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
   oncall       pager duty record
   projects     side projects
   offhours     what I do when not on-call
+  leetcode     problem-solving profile
   contact      how to reach me
   sudo         try it
   clear        clear the screen`,
@@ -345,7 +347,9 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
     projects: () => `<span class="n">videosummarizer</span>  django + postgres + gemini, jwt auth
 <span class="n">cryptoballot</span>     solidity voting protocol, -25% gas`,
     contact: () => `email   pandeyeshan13@gmail.com
-github  <a href="https://github.com/eshanpandey" target="_blank" rel="noopener">github.com/eshanpandey</a>`,
+github  <a href="https://github.com/eshanpandey" target="_blank" rel="noopener">github.com/eshanpandey</a>
+leetcode <a href="https://leetcode.com/u/03_Eshan/" target="_blank" rel="noopener">leetcode.com/u/03_Eshan</a>`,
+    leetcode: () => `<a href="https://leetcode.com/u/03_Eshan/" target="_blank" rel="noopener">leetcode.com/u/03_Eshan</a>`,
     sudo: () => `<span class="r">guest is not in the sudoers file. This incident will be reported.</span>`,
     ls: () => `whoami  stack  migrations  oncall  projects  offhours  contact`,
     offhours: () => `<span class="k">games</span>  Skyrim, James Bond
