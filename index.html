@@ -145,6 +145,11 @@
     <p class="tag">Platform &amp; backend engineer. <em>3 years</em> running production infrastructure on <em>AWS and GCP</em>. I migrate databases, move clouds, and keep live video streaming up. Go and Ruby on Rails, Kubernetes underneath.</p>
   </header>
 
+  <nav class="nav" aria-label="Sections"><span class="d">$ ls /</span>
+    <a href="#whoami">whoami/</a><a href="#metrics">metrics/</a><a href="#migration">runbooks/</a><a href="#experience">career/</a><a href="#systems">systems/</a><a href="#now">wip/</a><a href="#oncall">pager/</a><a href="#stack">stack/</a><a href="#repos">repos/</a><a href="#contact">contact/</a><a href="#shell">shell</a>
+    <span class="d hint">press <kbd>/</kbd> for the shell</span>
+  </nav>
+
   <section id="whoami" aria-labelledby="h-whoami">
     <p class="cmd" id="h-whoami"><span class="ps">$</span> curl -s <span class="path">localhost:8080/v1/whoami</span> | jq</p>
 <pre class="out">{
@@ -175,13 +180,14 @@
 
   <section id="migration" aria-labelledby="h-migration">
     <p class="cmd" id="h-migration"><span class="ps">$</span> cat <span class="path">runbooks/mysql-to-postgres.md</span> <span class="c"># core app DB, planned and cut over solo</span></p>
-    <div class="pipe" role="img" aria-label="CDC pipeline: MySQL to DataStream to Dataflow to Pub/Sub to PostgreSQL">
-      <div class="node src"><small>source</small>MySQL</div><span class="arrow">──▶</span>
-      <div class="node"><small>cdc</small>DataStream</div><span class="arrow">──▶</span>
-      <div class="node"><small>transform</small>Dataflow</div><span class="arrow">──▶</span>
-      <div class="node"><small>bus</small>Pub/Sub</div><span class="arrow">──▶</span>
-      <div class="node dst"><small>target</small>PostgreSQL</div>
+    <div class="pipe" data-pipe aria-label="CDC pipeline, click a stage for details">
+      <button type="button" class="node src" data-info="MySQL: the core application database, source of truth until cutover."><small>source</small>MySQL</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="DataStream: captures every change on MySQL in real time (change data capture)."><small>cdc</small>DataStream</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="Dataflow: processes the change stream on its way to the new database."><small>transform</small>Dataflow</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="Pub/Sub: carries the change events between stages."><small>bus</small>Pub/Sub</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node dst" data-info="PostgreSQL: the new home, kept in sync until production cutover with minimal downtime."><small>target</small>PostgreSQL</button>
     </div>
+    <p class="detail" aria-live="polite"><span class="d">›</span> click a stage to inspect it</p>
 <pre class="out wrap"><span class="d">[1/4]</span> schema design for PostgreSQL
 <span class="d">[2/4]</span> real-time CDC sync so both databases stay in step during the move
 <span class="d">[3/4]</span> production cutover with <span class="s">minimal downtime</span>
@@ -189,7 +195,14 @@
   </section>
 
   <section id="experience" aria-labelledby="h-exp">
-    <p class="cmd" id="h-exp"><span class="ps">$</span> journalctl -u <span class="path">career.service</span> --reverse</p>
+    <p class="cmd" id="h-exp"><span class="ps">$</span> journalctl -u <span class="path">career.service</span> --reverse <span class="d">| grep</span> <span class="sig" id="grepval">-E '.*'</span></p>
+    <div class="filters" role="group" aria-label="Filter log by type">
+      <button type="button" data-f="all" aria-pressed="true">all</button>
+      <button type="button" data-f="migr" aria-pressed="false">[MIGR] migrations</button>
+      <button type="button" data-f="arch" aria-pressed="false">[ARCH] architecture</button>
+      <button type="button" data-f="ship" aria-pressed="false">[SHIP] shipped</button>
+      <button type="button" data-f="oncall" aria-pressed="false">[PAGE] on-call</button>
+    </div>
 
     <article class="job">
       <header><h3>Learnyst</h3><span class="role">Software Engineer</span><span class="when">May 2024 → present · Bangalore</span></header>
@@ -226,6 +239,58 @@
     </article>
   </section>
 
+  <section id="systems" aria-labelledby="h-sys">
+    <p class="cmd" id="h-sys"><span class="ps">$</span> kubectl describe system <span class="path">superlive</span> <span class="c"># live class streaming, I own the feature area</span></p>
+    <div class="pipe" data-pipe aria-label="Superlive architecture, click a component for details">
+      <button type="button" class="node" data-info="Resource manager: Node.js + Fastify service that decides when live-class infrastructure is needed."><small>node · fastify</small>Resource manager</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="BullMQ: job queues the resource manager uses to schedule work reliably."><small>queue</small>BullMQ</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="Linode VMs: machines scheduled on demand for live sessions."><small>compute</small>Linode VMs</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="LiveKit: Go-based WebRTC media server (SFU) that carries the live class."><small>go · webrtc sfu</small>LiveKit</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node dst" data-info="Auto recording: I built automatic session recording into the LiveKit media server."><small>built by me</small>Session recording</button>
+    </div>
+    <p class="detail" aria-live="polite"><span class="d">›</span> click a component to inspect it</p>
+
+    <p class="cmd"><span class="ps">$</span> CLOUD_PROVIDER=<span class="sig" id="provval">gcp</span> rails runner <span class="s">'p CloudProvider.current'</span> <span class="c"># strategy pattern, flip it</span></p>
+    <div class="toggle" role="group" aria-label="Cloud provider">
+      <button type="button" data-prov="aws" aria-pressed="false">aws</button>
+      <button type="button" data-prov="gcp" aria-pressed="true">gcp</button>
+    </div>
+<pre class="out"><span class="d"># illustrative sketch of the pattern, not production code</span>
+<span class="v">class</span> <span class="k">CloudProvider</span>
+  STRATEGIES = { <span class="n">aws:</span> AwsStrategy, <span class="n">gcp:</span> GcpStrategy }
+
+  <span class="v">def</span> self.current
+    STRATEGIES.fetch(ENV[<span class="s">"CLOUD_PROVIDER"</span>].to_sym).new
+  <span class="v">end</span>
+<span class="v">end</span>
+
+<span id="provout"><span class="s">=&gt;</span> #&lt;GcpStrategy&gt;</span>
+<span class="d" id="provnote"># same code path, different vendor. this is what made the AWS → GCP move possible.</span></pre>
+  </section>
+
+  <section id="now" aria-labelledby="h-now">
+    <p class="cmd" id="h-now"><span class="ps">$</span> git log --oneline -1 <span class="path">feature/course-discovery</span></p>
+<pre class="out wrap"><span class="n">a1c0de5</span> <span class="r">(WIP)</span> design natural-language course discovery with RAG over AlloyDB</pre>
+    <div class="pipe" data-pipe aria-label="RAG course discovery design, click a stage for details">
+      <button type="button" class="node src" data-info="Query: open-ended questions in plain language from learners."><small>input</small>Question</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="Embeddings: the question is turned into a vector for semantic search."><small>embed</small>Embeddings</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="AlloyDB: stores embeddings for the catalog and runs the vector search."><small>vector store</small>AlloyDB</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node" data-info="Retrieval-augmented generation: retrieved content grounds the answer."><small>generate</small>RAG</button><span class="arrow" aria-hidden="true">──▶</span>
+      <button type="button" class="node dst" data-info="Results: related courses, articles and assessments across the catalog."><small>output</small>Courses · articles · tests</button>
+    </div>
+    <p class="detail" aria-live="polite"><span class="d">›</span> click a stage to inspect it</p>
+  </section>
+
+  <section id="oncall" aria-labelledby="h-oncall">
+    <p class="cmd" id="h-oncall"><span class="ps">$</span> pagerctl simulate <span class="c"># a replay of the kinds of incidents I handle. pick one.</span></p>
+    <div class="toggle" role="group" aria-label="Trigger a simulated incident">
+      <button type="button" data-inc="api">page: api down</button>
+      <button type="button" data-inc="db">page: database</button>
+      <button type="button" data-inc="deploy">page: failed deploy</button>
+    </div>
+<pre class="out wrap" id="inclog" aria-live="polite"><span class="d">pager idle. no active incidents. trigger one above.</span></pre>
+  </section>
+
   <section id="stack" aria-labelledby="h-stack">
     <p class="cmd" id="h-stack"><span class="ps">$</span> helm get values <span class="path">eshan</span> -o yaml</p>
 <pre class="out"><span class="k">languages</span>: [<span class="s">go</span>, <span class="s">ruby</span>, <span class="s">javascript</span>, <span class="s">python</span>, <span class="s">sql</span>, <span class="s">solidity</span>]
@@ -247,10 +312,35 @@
     <div class="tbl"><table>
       <thead><tr><th>NAME</th><th>STACK</th><th>STATUS</th><th>NOTES</th></tr></thead>
       <tbody>
-        <tr><td>videosummarizer</td><td>Python, Django, PostgreSQL, Gemini API</td><td class="s">Running</td><td>Extracts and summarizes key insights from video transcripts with Gemini Pro. JWT auth, Postgres-backed user data.</td></tr>
-        <tr><td>cryptoballot</td><td>Solidity, Ethereum, Web3.js</td><td class="s">Running</td><td>Decentralized voting protocol on smart contracts for tamper-proof results. Refactor cut gas use by 25%.</td></tr>
+        <tr><td><a href="https://github.com/eshanpandey/Video_Summarizer" target="_blank" rel="noopener">videosummarizer</a></td><td>Python, Django, PostgreSQL, Gemini API</td><td class="s">Running</td><td>Extracts and summarizes key insights from video transcripts with Gemini Pro. JWT auth, Postgres-backed user data.</td></tr>
+        <tr><td><a href="https://github.com/eshanpandey/CryptoBallot" target="_blank" rel="noopener">cryptoballot</a></td><td>Solidity, Ethereum, Web3.js</td><td class="s">Running</td><td>Decentralized voting protocol on smart contracts for tamper-proof results. Refactor cut gas use by 25%.</td></tr>
       </tbody>
     </table></div>
+  </section>
+
+  <section id="repos" aria-labelledby="h-repos">
+    <p class="cmd" id="h-repos"><span class="ps">$</span> gh repo list <span class="path">eshanpandey</span> | grep <input id="repofilter" type="text" placeholder="filter…" spellcheck="false" autocomplete="off" aria-label="Filter repositories"></p>
+    <div class="tbl"><table>
+      <thead><tr><th>REPO</th><th>LAST PUSH</th><th>NOTES</th></tr></thead>
+      <tbody id="repobody">
+        <tr data-name="video_summarizer"><td><a href="https://github.com/eshanpandey/Video_Summarizer" target="_blank" rel="noopener">Video_Summarizer</a></td><td class="d">2024</td><td>AI summaries of video transcripts (see projects)</td></tr>
+        <tr data-name="cryptoballot"><td><a href="https://github.com/eshanpandey/CryptoBallot" target="_blank" rel="noopener">CryptoBallot</a></td><td class="d">2023</td><td>smart-contract voting protocol (see projects)</td></tr>
+        <tr data-name="chatapp"><td><a href="https://github.com/eshanpandey/chatapp" target="_blank" rel="noopener">chatapp</a></td><td class="d">2024</td><td></td></tr>
+        <tr data-name="telegram-bot"><td><a href="https://github.com/eshanpandey/Telegram-Bot" target="_blank" rel="noopener">Telegram-Bot</a></td><td class="d">2024</td><td></td></tr>
+        <tr data-name="fast_api_usecases"><td><a href="https://github.com/eshanpandey/Fast_API_Usecases" target="_blank" rel="noopener">Fast_API_Usecases</a></td><td class="d">2024</td><td></td></tr>
+        <tr data-name="url-shortener"><td><a href="https://github.com/eshanpandey/Url-Shortener" target="_blank" rel="noopener">Url-Shortener</a></td><td class="d">2024</td><td></td></tr>
+        <tr data-name="gemini-chatbot"><td><a href="https://github.com/eshanpandey/Gemini-ChatBot" target="_blank" rel="noopener">Gemini-ChatBot</a></td><td class="d">2024</td><td></td></tr>
+        <tr data-name="django-rest-api"><td><a href="https://github.com/eshanpandey/Django-REST-API" target="_blank" rel="noopener">Django-REST-API</a></td><td class="d">2023</td><td></td></tr>
+        <tr data-name="netprime-django"><td><a href="https://github.com/eshanpandey/NetPrime-Django" target="_blank" rel="noopener">NetPrime-Django</a></td><td class="d">2024</td><td></td></tr>
+        <tr data-name="flask-weather"><td><a href="https://github.com/eshanpandey/Flask-Weather" target="_blank" rel="noopener">Flask-Weather</a></td><td class="d">2024</td><td></td></tr>
+        <tr data-name="rails_server_1"><td><a href="https://github.com/eshanpandey/Rails_Server_1" target="_blank" rel="noopener">Rails_Server_1</a></td><td class="d">2025</td><td></td></tr>
+        <tr data-name="cdk_demo"><td><a href="https://github.com/eshanpandey/cdk_demo" target="_blank" rel="noopener">cdk_demo</a></td><td class="d">2025</td><td></td></tr>
+        <tr data-name="neetcode-submissions"><td><a href="https://github.com/eshanpandey/neetcode-submissions" target="_blank" rel="noopener">neetcode-submissions</a></td><td class="d">2026</td><td>DSA practice</td></tr>
+        <tr data-name="cryptowallet"><td><a href="https://github.com/eshanpandey/CryptoWallet" target="_blank" rel="noopener">CryptoWallet</a></td><td class="d">2023</td><td></td></tr>
+        <tr data-name="ethereum-todolist"><td><a href="https://github.com/eshanpandey/Ethereum-TodoList" target="_blank" rel="noopener">Ethereum-TodoList</a></td><td class="d">2022</td><td></td></tr>
+      </tbody>
+    </table></div>
+    <p class="d" id="repocount" style="margin:0;font-size:12px"></p>
   </section>
 
   <section id="log" aria-labelledby="h-log">
@@ -284,7 +374,7 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
         <input id="cmd" type="text" spellcheck="false" autocapitalize="off" aria-label="Command">
       </form>
       <div class="chips" id="chips">
-        <button type="button">help</button><button type="button">whoami</button><button type="button">stack</button><button type="button">migrations</button><button type="button">oncall</button><button type="button">projects</button><button type="button">offhours</button><button type="button">leetcode</button><button type="button">contact</button><button type="button">clear</button>
+        <button type="button">help</button><button type="button">whoami</button><button type="button">stack</button><button type="button">migrations</button><button type="button">oncall</button><button type="button">incident</button><button type="button">systems</button><button type="button">projects</button><button type="button">offhours</button><button type="button">leetcode</button><button type="button">contact</button><button type="button">clear</button>
       </div>
     </div>
   </section>
@@ -295,6 +385,30 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
   <span>© Eshan Pandey</span>
 </footer>
 
+<style>
+  .nav{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-size:13px;margin-top:-18px}
+  .nav a{border:0;color:var(--cyan)}
+  .nav a:hover,.nav a:focus-visible{color:var(--amber)}
+  .nav .hint{margin-left:auto;font-size:12px}
+  kbd{font:11px var(--mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:0 5px;color:var(--fg)}
+  button.node{font:inherit;color:var(--fg);text-align:left;cursor:pointer;font-size:12.5px}
+  button.node:hover,button.node[aria-current="true"]{border-color:var(--amber);color:#fff}
+  .detail{margin:0;font-size:13px;min-height:1.6em;color:var(--fg)}
+  .filters,.toggle{display:flex;flex-wrap:wrap;gap:6px}
+  .filters button,.toggle button{font:12px var(--mono);color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:4px 10px;cursor:pointer}
+  .filters button:hover,.toggle button:hover{color:var(--fg)}
+  .filters button[aria-pressed="true"],.toggle button[aria-pressed="true"]{color:var(--bg);background:var(--amber);border-color:var(--amber)}
+  .toggle button[data-inc]{color:var(--red);border-color:color-mix(in srgb,var(--red) 45%,var(--line))}
+  .toggle button[data-inc]:hover{background:var(--red);color:var(--bg)}
+  .toggle button:disabled{opacity:.45;cursor:wait}
+  [hidden]{display:none!important}
+  #repofilter{font:14px var(--mono);background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:3px;padding:1px 8px;width:12ch;caret-color:var(--amber)}
+  #repofilter:focus{border-color:var(--amber);outline:none}
+  #repobody td:first-child a{color:var(--amber);border-color:transparent}
+  #repobody td:first-child a:hover{border-color:var(--amber)}
+  .flash{animation:flash 1.2s ease-out}
+  @keyframes flash{from{background:color-mix(in srgb,var(--amber) 22%,transparent)}}
+</style>
 <style>.copybtn{font:12px var(--mono);background:none;border:0;color:var(--dim);cursor:pointer;padding:0}.copybtn:hover,.copybtn:focus-visible{color:var(--amber)}</style>
 <script>
 (() => {
@@ -326,6 +440,11 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
   oncall       pager duty record
   projects     side projects
   offhours     what I do when not on-call
+  systems      superlive architecture + strategy demo
+  now          what I'm building now
+  incident     page me (api | db | deploy)
+  repos        public github repos
+  cd &lt;dir&gt;     jump to a section (see ls)
   leetcode     problem-solving profile
   contact      how to reach me
   sudo         try it
@@ -349,27 +468,115 @@ eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s
 github  <a href="https://github.com/eshanpandey" target="_blank" rel="noopener">github.com/eshanpandey</a>
 leetcode <a href="https://leetcode.com/u/03_Eshan/" target="_blank" rel="noopener">leetcode.com/u/03_Eshan</a>`,
     leetcode: () => `<a href="https://leetcode.com/u/03_Eshan/" target="_blank" rel="noopener">leetcode.com/u/03_Eshan</a>`,
+    systems: () => { go('systems'); return `superlive: fastify → bullmq → linode vms → livekit (go/webrtc) → recording
+strategy pattern demo below it. scrolled you there.`; },
+    now: () => { go('now'); return `(WIP) natural-language course discovery: RAG over embeddings in AlloyDB`; },
+    incident: (a) => { const k = INC[a] ? a : 'api'; go('oncall'); runIncident(k); return `paging eshan (simulation: ${k}). watch the pager section.`; },
+    repos: () => { go('repos'); return `${rows.length} public repos listed. type in the grep box to filter.`; },
+    cd: (a) => { const id = {'/':'whoami','~':'whoami',career:'experience',runbooks:'migration',wip:'now',pager:'oncall'}[a] || a; if (a && document.getElementById(id)) { go(id); return `<span class="d">cd /${esc(a)}</span>`; } return `<span class="r">cd: no such section: ${esc(a || '')}</span> <span class="d">(try ls)</span>`; },
     sudo: () => `<span class="r">guest is not in the sudoers file. This incident will be reported.</span>`,
-    ls: () => `whoami  stack  migrations  oncall  projects  offhours  contact`,
+    ls: () => `whoami/  metrics/  runbooks/  career/  systems/  wip/  pager/  stack/  projects/  repos/  offhours/  contact/  shell/`,
     offhours: () => `<span class="k">games</span>  Skyrim, James Bond
 <span class="k">books</span>  reading whenever I can`,
     exit: () => `<span class="d">there is no exit. only on-call.</span>`,
   };
   const hist = document.getElementById('hist'), input = document.getElementById('cmd');
   const past = []; let idx = 0;
+  const go = id => { const el = document.getElementById(id); if (el) setTimeout(() => el.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}), 50); };
   const run = raw => {
     const cmd = raw.trim(); if (!cmd) return;
     past.push(cmd); idx = past.length;
     const name = cmd.split(/\s+/)[0].toLowerCase();
     if (name === 'clear') { hist.innerHTML = ''; return; }
-    const out = C[name] ? C[name]() : `<span class="r">command not found: ${esc(name)}</span> <span class="d">(try help)</span>`;
+    const arg = cmd.split(/\s+/)[1];
+    const out = C[name] ? C[name](arg) : `<span class="r">command not found: ${esc(name)}</span> <span class="d">(try help)</span>`;
     hist.innerHTML += `\n<span class="s">guest@eshan:~$</span> ${esc(cmd)}\n${out}`;
     hist.scrollTop = hist.scrollHeight;
   };
   document.getElementById('f').addEventListener('submit', e => { e.preventDefault(); run(input.value); input.value = ''; });
   input.addEventListener('keydown', e => {
     if (e.key === 'ArrowUp' && idx > 0) { input.value = past[--idx]; e.preventDefault(); }
+    if (e.key === 'Tab' && input.value) { const m = Object.keys(C).concat('clear').filter(k => k.startsWith(input.value.toLowerCase())); if (m.length === 1) input.value = m[0] + ' '; else if (m.length) hist.innerHTML += `\n<span class="d">${m.join('  ')}</span>`; e.preventDefault(); }
     if (e.key === 'ArrowDown') { idx = Math.min(past.length, idx + 1); input.value = past[idx] || ''; e.preventDefault(); }
+  });
+
+  // clickable pipelines
+  document.querySelectorAll('[data-pipe]').forEach(pipe => {
+    const detail = pipe.nextElementSibling;
+    pipe.addEventListener('click', e => {
+      const n = e.target.closest('.node'); if (!n) return;
+      pipe.querySelectorAll('.node').forEach(x => x.removeAttribute('aria-current'));
+      n.setAttribute('aria-current','true');
+      detail.innerHTML = '<span class="n">›</span> ' + esc(n.dataset.info);
+    });
+  });
+
+  // experience filter
+  const grepval = document.getElementById('grepval');
+  const tags = {all:".*", migr:"MIGR", arch:"ARCH", ship:"SHIP", oncall:"PAGE"};
+  document.querySelectorAll('.filters button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.filters button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    const f = b.dataset.f;
+    document.querySelectorAll('#experience .log li').forEach(li => {
+      li.hidden = f !== 'all' && !li.querySelector('.lvl.' + f);
+    });
+    document.querySelectorAll('#experience .job').forEach(j => { j.hidden = !j.querySelector('.log li:not([hidden])'); });
+    grepval.textContent = "-E '" + tags[f] + "'";
+  }));
+
+  // strategy toggle
+  const provval = document.getElementById('provval'), provout = document.getElementById('provout'), provnote = document.getElementById('provnote');
+  document.querySelectorAll('[data-prov]').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-prov]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    const p = b.dataset.prov, cls = p === 'aws' ? 'AwsStrategy' : 'GcpStrategy';
+    provval.textContent = p;
+    provout.innerHTML = '<span class="s">=&gt;</span> #&lt;' + cls + '&gt;';
+    provnote.textContent = '# switched to ' + p + '. zero lines of business logic changed.';
+    provout.classList.remove('flash'); void provout.offsetWidth; provout.classList.add('flash');
+  }));
+
+  // incident simulator
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const INC = {
+    api: [['r','FIRING','5xx rate spiking on public API, customers seeing errors'],['n','ACK','eshan acknowledged the page'],['k','DIAG','checking dashboards and recent deploys'],['k','DIAG','isolated the failing service'],['s','MITIGATE','traffic restored'],['s','RESOLVED','API healthy. writing up what happened']],
+    db: [['r','FIRING','database latency climbing, queries timing out'],['n','ACK','eshan acknowledged the page'],['k','DIAG','inspecting slow queries and connections'],['s','MITIGATE','load relieved, latency back to normal'],['s','RESOLVED','database healthy. follow-up ticket filed']],
+    deploy: [['r','FIRING','release failed mid-rollout'],['n','ACK','eshan acknowledged the page'],['k','DIAG','reading pipeline and pod logs'],['s','MITIGATE','rolled back to last good release'],['s','RESOLVED','fix shipped through CI/CD. deploys green']]
+  };
+  const inclog = document.getElementById('inclog');
+  const incBtns = document.querySelectorAll('[data-inc]');
+  const runIncident = kind => {
+    const steps = INC[kind]; if (!steps) return;
+    incBtns.forEach(b => b.disabled = true);
+    inclog.innerHTML = '<span class="d">simulation · ' + kind + '</span>';
+    const t0 = Date.now();
+    let i = 0;
+    const next = () => {
+      const [c, lvl, msg] = steps[i];
+      const ts = (reduce ? i * 0.65 : (Date.now() - t0) / 1000).toFixed(2).padStart(5,'0');
+      inclog.innerHTML += '\n<span class="d">+' + ts + 's</span> <span class="' + c + '">' + lvl.padEnd(8) + '</span> ' + msg;
+      if (++i < steps.length) setTimeout(next, reduce ? 0 : 650);
+      else incBtns.forEach(b => b.disabled = false);
+    };
+    next();
+  };
+  incBtns.forEach(b => b.addEventListener('click', () => runIncident(b.dataset.inc)));
+
+  // repo filter
+  const rf = document.getElementById('repofilter'), rc = document.getElementById('repocount');
+  const rows = [...document.querySelectorAll('#repobody tr')];
+  const filterRepos = () => {
+    const q = rf.value.trim().toLowerCase(); let n = 0;
+    rows.forEach(r => { const hit = !q || r.dataset.name.includes(q); r.hidden = !hit; if (hit) n++; });
+    rc.textContent = n + ' of ' + rows.length + ' repos';
+  };
+  rf.addEventListener('input', filterRepos); filterRepos();
+
+  // "/" focuses the shell
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) {
+      e.preventDefault(); input.focus({preventScroll:true});
+      document.getElementById('shell').scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'center'});
+    }
   });
   document.getElementById('chips').addEventListener('click', e => { if (e.target.tagName === 'BUTTON') run(e.target.textContent); });
 })();
