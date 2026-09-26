@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eshan Pandey</title>
+<meta name="description" content="Eshan Pandey: platform and backend engineer. Go, Rails, Kubernetes, GCP, AWS, WebRTC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,800;1,400&display=swap">
+<style>
+  /* Deliberately single-theme: a production terminal. */
+  :root{
+    color-scheme: dark;
+    --bg:#0c0f13;
+    --panel:#12161c;
+    --line:#222a33;
+    --fg:#cdd5cf;
+    --dim:#6b7682;
+    --amber:#f0a841;
+    --cyan:#6fc3d3;
+    --green:#7fcf8a;
+    --red:#ef6f6c;
+    --violet:#b9a1f2;
+    --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  html,body{background:var(--bg);}
+  body{
+    color:var(--fg); font:14px/1.6 var(--mono);
+    padding-inline:16px; padding-block:0 48px;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--amber);color:var(--bg)}
+  a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted var(--cyan)}
+  a:hover,a:focus-visible{color:var(--amber);border-color:var(--amber)}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+  .bar{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:5;
+    margin-inline:-16px; padding:6px 16px;
+    background:var(--panel); border-bottom:1px solid var(--line);
+    display:flex; flex-wrap:wrap; gap:4px 18px; font-size:12px; color:var(--dim);
+  }
+  .bar b{color:var(--fg);font-weight:600}
+  .bar .ok{color:var(--green)}
+  .bar .spacer{flex:1}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:1px;box-shadow:0 0 6px var(--green);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+
+  main{max-width:920px;margin:0 auto;display:grid;gap:44px;padding-top:36px}
+
+  .banner{color:var(--amber);font-size:clamp(5px,1.35vw,11px);line-height:1.15;font-weight:800;margin:0;overflow-x:auto}
+  h1{font-size:clamp(28px,6vw,52px);line-height:1.05;margin:14px 0 6px;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+  h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--amber);vertical-align:-.08em;margin-left:.12em;animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .tag{color:var(--dim);max-width:68ch;margin:0}
+  .tag em{color:var(--fg);font-style:normal}
+
+  section{display:grid;gap:12px}
+  .cmd{margin:0;font-size:14px;font-weight:600;color:var(--fg);word-break:break-word}
+  .cmd .ps{color:var(--green)} .cmd .path{color:var(--cyan)} .cmd .sig{color:var(--amber)}
+  .cmd .c{color:var(--dim);font-weight:400}
+  .out{
+    margin:0; padding:14px 16px; background:var(--panel); border:1px solid var(--line); border-radius:4px;
+    overflow-x:auto; white-space:pre; font:13px/1.65 var(--mono); tab-size:2;
+  }
+  .wrap{white-space:pre-wrap}
+  .k{color:var(--cyan)} .s{color:var(--green)} .n{color:var(--amber)} .d{color:var(--dim)} .r{color:var(--red)} .v{color:var(--violet)}
+  .b{font-weight:600;color:var(--fg)}
+
+  /* experience */
+  .job{border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+  .job header{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 16px;border-bottom:1px solid var(--line)}
+  .job h3{margin:0;font-size:15px;color:var(--amber)}
+  .job .role{color:var(--fg)}
+  .job .when{color:var(--dim);margin-left:auto;font-variant-numeric:tabular-nums}
+  .job .stack{padding:10px 16px 0;color:var(--dim);font-size:12.5px}
+  .log{list-style:none;margin:0;padding:10px 16px 14px;display:grid;gap:8px;font-size:13px}
+  .log li{display:grid;grid-template-columns:auto 1fr;gap:10px}
+  .lvl{font-size:11.5px;font-weight:600;padding-top:1px}
+  .lvl.ship{color:var(--green)} .lvl.migr{color:var(--amber)} .lvl.arch{color:var(--violet)} .lvl.oncall{color:var(--red)} .lvl.info{color:var(--cyan)}
+  .log strong{color:#fff;font-weight:600}
+  .log .m{color:var(--amber);font-weight:600}
+
+  /* pipeline */
+  .pipe{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:4px}
+  .node{border:1px solid var(--line);padding:6px 10px;border-radius:3px;font-size:12.5px;background:var(--bg)}
+  .node small{display:block;color:var(--dim);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+  .node.src{border-color:var(--red)} .node.dst{border-color:var(--green)}
+  .arrow{color:var(--dim);position:relative;overflow:hidden;width:34px;text-align:center}
+  .arrow::after{content:"";position:absolute;left:-6px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--amber);animation:flow 1.6s linear infinite}
+  @keyframes flow{to{left:40px}}
+
+  /* projects table */
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{text-align:left;padding:6px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-weight:600;font-size:11.5px;letter-spacing:.06em}
+  td:first-child{color:var(--amber);white-space:nowrap}
+  .tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:4px}
+
+  /* interactive shell */
+  .shell{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:12px 16px}
+  #hist{white-space:pre-wrap;font-size:13px;margin:0 0 6px;max-height:340px;overflow:auto}
+  .line{display:flex;gap:8px;align-items:center}
+  .line label{color:var(--green);white-space:nowrap;font-weight:600}
+  #cmd{flex:1;min-width:0;background:transparent;border:0;color:var(--fg);font:14px var(--mono);caret-color:var(--amber);outline:none}
+  .shell:focus-within{border-color:var(--amber)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chips button{font:12px var(--mono);color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:3px;padding:3px 8px;cursor:pointer}
+  .chips button:hover,.chips button:focus-visible{color:var(--amber);border-color:var(--amber)}
+
+  footer{max-width:920px;margin:40px auto 0;color:var(--dim);font-size:12px;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-wrap:wrap;gap:6px 18px}
+
+  @media (max-width:560px){
+    body{font-size:13px}
+    .job .when{margin-left:0;width:100%}
+    .log li{grid-template-columns:1fr;gap:0}
+    .arrow{transform:rotate(90deg);width:100%}
+    .pipe{flex-direction:column;align-items:stretch}
+    .arrow::after{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bar" role="status">
+  <span><span class="dot"></span><b>eshan@prod</b></span>
+  <span>region <b>blr / asia-south1</b></span>
+  <span>uptime <b>3y</b></span>
+  <span>on-call <b class="ok">ACK</b></span>
+  <span class="spacer"></span>
+  <span id="clock">--:--:-- IST</span>
+</div>
+
+<main>
+  <header>
+<pre class="banner" aria-hidden="true">
+ ███████╗███████╗██╗  ██╗ █████╗ ███╗   ██╗
+ ██╔════╝██╔════╝██║  ██║██╔══██╗████╗  ██║
+ █████╗  ███████╗███████║███████║██╔██╗ ██║
+ ██╔══╝  ╚════██║██╔══██║██╔══██║██║╚██╗██║
+ ███████╗███████║██║  ██║██║  ██║██║ ╚████║
+ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝</pre>
+    <h1>Eshan Pandey<span class="cur"></span></h1>
+    <p class="tag">Platform &amp; backend engineer. <em>3 years</em> running production infrastructure on <em>AWS and GCP</em>. I migrate databases, move clouds, and keep live video streaming up. Go and Ruby on Rails, Kubernetes underneath.</p>
+  </header>
+
+  <section id="whoami" aria-labelledby="h-whoami">
+    <p class="cmd" id="h-whoami"><span class="ps">$</span> curl -s <span class="path">localhost:8080/v1/whoami</span> | jq</p>
+<pre class="out">{
+  <span class="k">"name"</span>: <span class="s">"Eshan Pandey"</span>,
+  <span class="k">"role"</span>: <span class="s">"Software Engineer, Platform &amp; Backend"</span>,
+  <span class="k">"company"</span>: <span class="s">"Learnyst"</span>,
+  <span class="k">"location"</span>: <span class="s">"Bangalore, IN"</span>,
+  <span class="k">"experience_years"</span>: <span class="n">3</span>,
+  <span class="k">"languages"</span>: [<span class="s">"go"</span>, <span class="s">"ruby"</span>, <span class="s">"javascript"</span>, <span class="s">"python"</span>, <span class="s">"sql"</span>],
+  <span class="k">"clouds"</span>: [<span class="s">"gcp"</span>, <span class="s">"aws"</span>, <span class="s">"linode"</span>],
+  <span class="k">"on_call"</span>: <span class="n">true</span>,
+  <span class="k">"focus"</span>: [<span class="s">"db migrations"</span>, <span class="s">"multi-cloud"</span>, <span class="s">"kubernetes"</span>, <span class="s">"webrtc"</span>, <span class="s">"rag"</span>]
+}
+<span class="d">HTTP/2 200 · content-type: application/json · x-response-time: 12ms</span></pre>
+  </section>
+
+  <section id="metrics" aria-labelledby="h-metrics">
+    <p class="cmd" id="h-metrics"><span class="ps">$</span> curl -s <span class="path">localhost:9090/metrics</span> | grep eshan_</p>
+<pre class="out"><span class="d"># HELP eshan_deploy_time_reduction_percent CI/CD on AWS ECS + CodePipeline</span>
+<span class="d"># TYPE eshan_deploy_time_reduction_percent gauge</span>
+<span class="k">eshan_deploy_time_reduction_percent</span>{pipeline=<span class="s">"ecs"</span>}          <span class="n">60</span>
+<span class="k">eshan_incident_response_reduction_percent</span>{src=<span class="s">"cloudwatch"</span>} <span class="n">40</span>
+<span class="k">eshan_cloud_migration_window_days</span>{from=<span class="s">"aws"</span>,to=<span class="s">"gcp"</span>}  <span class="n">10</span>
+<span class="k">eshan_db_migrations_total</span>{from=<span class="s">"mysql"</span>,to=<span class="s">"postgres"</span>} <span class="n">1</span>
+<span class="k">eshan_gas_reduction_percent</span>{contract=<span class="s">"cryptoballot"</span>}    <span class="n">25</span>
+<span class="k">eshan_awards_total</span>{name=<span class="s">"bravo"</span>,year=<span class="s">"2025"</span>}          <span class="n">1</span></pre>
+  </section>
+
+  <section id="migration" aria-labelledby="h-migration">
+    <p class="cmd" id="h-migration"><span class="ps">$</span> cat <span class="path">runbooks/mysql-to-postgres.md</span> <span class="c"># core app DB, planned and cut over solo</span></p>
+    <div class="pipe" role="img" aria-label="CDC pipeline: MySQL to DataStream to Dataflow to Pub/Sub to PostgreSQL">
+      <div class="node src"><small>source</small>MySQL</div><span class="arrow">──▶</span>
+      <div class="node"><small>cdc</small>DataStream</div><span class="arrow">──▶</span>
+      <div class="node"><small>transform</small>Dataflow</div><span class="arrow">──▶</span>
+      <div class="node"><small>bus</small>Pub/Sub</div><span class="arrow">──▶</span>
+      <div class="node dst"><small>target</small>PostgreSQL</div>
+    </div>
+<pre class="out wrap"><span class="d">[1/4]</span> schema design for PostgreSQL
+<span class="d">[2/4]</span> real-time CDC sync so both databases stay in step during the move
+<span class="d">[3/4]</span> production cutover with <span class="s">minimal downtime</span>
+<span class="d">[4/4]</span> <span class="s">done</span>: better performance, reliability and long-term scalability</pre>
+  </section>
+
+  <section id="experience" aria-labelledby="h-exp">
+    <p class="cmd" id="h-exp"><span class="ps">$</span> journalctl -u <span class="path">career.service</span> --reverse</p>
+
+    <article class="job">
+      <header><h3>Learnyst</h3><span class="role">Software Engineer</span><span class="when">May 2024 → present · Bangalore</span></header>
+      <div class="stack">Go · Rails · Node.js (Fastify, BullMQ) · GKE · Dataflow · DataStream · Pub/Sub · AlloyDB · OpenSearch · ECS · Lambda · CloudWatch · Linode · Helm · LiveKit/WebRTC · Postgres · MySQL · Kafka · Redis · Docker</div>
+      <ul class="log">
+        <li><span class="lvl migr">[MIGR]</span><span>Independently planned and executed the <strong>MySQL → PostgreSQL</strong> migration of the core application database, from schema design through production cutover.</span></li>
+        <li><span class="lvl migr">[MIGR]</span><span>Built a real-time <strong>CDC pipeline</strong> with DataStream, Dataflow and Pub/Sub to keep data in sync during the move with minimal downtime.</span></li>
+        <li><span class="lvl arch">[ARCH]</span><span>Made the backend <strong>vendor-agnostic</strong> with the Strategy Pattern: authenticator and cloud provider became configuration, not hardcoded dependencies. That groundwork made the multi-cloud migration possible.</span></li>
+        <li><span class="lvl migr">[MIGR]</span><span>Migrated <strong>OpenSearch and AWS Lambda</strong> workloads in the team push that moved critical infrastructure from <strong>AWS to GCP</strong> in a <span class="m">10-day</span> window.</span></li>
+        <li><span class="lvl ship">[SHIP]</span><span>Build features on <strong>Superlive</strong>, the live class streaming platform, including automatic session recording in the Go-based <strong>LiveKit WebRTC</strong> media server. Primary point of contact for the area. The stack includes a Node.js/Fastify resource manager that schedules Linode VMs through BullMQ.</span></li>
+        <li><span class="lvl migr">[MIGR]</span><span>Moved backend services and async workers from instances to <strong>GKE</strong>, deployed with Helm.</span></li>
+        <li><span class="lvl arch">[ARCH]</span><span>Designing <strong>natural-language course discovery</strong>: RAG over embeddings stored in AlloyDB, resolving open-ended queries into courses, articles and assessments.</span></li>
+        <li><span class="lvl ship">[SHIP]</span><span>Built a <strong>Coding Challenge</strong> module with secure sandboxed code execution for interactive programming assessments.</span></li>
+        <li><span class="lvl oncall">[PAGE]</span><span><strong>On-call</strong> for production: API downtime, database issues, failed deploys. Wired CloudWatch monitoring into Sidekiq workloads, cutting incident response time by <span class="m">40%</span>.</span></li>
+        <li><span class="lvl ship">[SHIP]</span><span>Automated CI/CD on <strong>AWS ECS + CodePipeline</strong>, cutting deploy time by <span class="m">60%</span>.</span></li>
+      </ul>
+    </article>
+
+    <article class="job">
+      <header><h3>EXL Service</h3><span class="role">Graduate Engineer Trainee</span><span class="when">Oct 2023 → Mar 2024 · Remote</span></header>
+      <div class="stack">Python · Jenkins · data engineering pipelines</div>
+      <ul class="log">
+        <li><span class="lvl info">[INFO]</span><span>Technical rotation in Python-based <strong>data engineering</strong> and <strong>Jenkins</strong> deployment automation.</span></li>
+      </ul>
+    </article>
+
+    <article class="job">
+      <header><h3>LCEPL</h3><span class="role">Software Development Intern</span><span class="when">Apr 2022 → Oct 2022 · Pune</span></header>
+      <div class="stack">Flask · JavaScript · CSS</div>
+      <ul class="log">
+        <li><span class="lvl ship">[SHIP]</span><span>Built an automated email response engine in <strong>Flask</strong>, improving response latency by <span class="m">50%</span>.</span></li>
+        <li><span class="lvl ship">[SHIP]</span><span>Front-end work in JavaScript and CSS that lifted user engagement metrics by <span class="m">25%</span>.</span></li>
+      </ul>
+    </article>
+  </section>
+
+  <section id="stack" aria-labelledby="h-stack">
+    <p class="cmd" id="h-stack"><span class="ps">$</span> helm get values <span class="path">eshan</span> -o yaml</p>
+<pre class="out"><span class="k">languages</span>: [<span class="s">go</span>, <span class="s">ruby</span>, <span class="s">javascript</span>, <span class="s">python</span>, <span class="s">sql</span>, <span class="s">solidity</span>]
+<span class="k">frameworks</span>: [<span class="s">rails</span>, <span class="s">node</span>, <span class="s">fastify</span>, <span class="s">bullmq</span>, <span class="s">graphql</span>, <span class="s">rest</span>, <span class="s">rspec</span>, <span class="s">django</span>, <span class="s">flask</span>]
+<span class="k">cloud</span>:
+  <span class="k">gcp</span>: [<span class="s">gke</span>, <span class="s">dataflow</span>, <span class="s">datastream</span>, <span class="s">pubsub</span>, <span class="s">alloydb</span>]
+  <span class="k">aws</span>: [<span class="s">ecs</span>, <span class="s">lambda</span>, <span class="s">cloudwatch</span>, <span class="s">codepipeline</span>]
+  <span class="k">other</span>: [<span class="s">linode</span>]
+<span class="k">platform</span>: [<span class="s">kubernetes</span>, <span class="s">helm</span>, <span class="s">docker</span>, <span class="s">jenkins</span>, <span class="s">ci/cd</span>]
+<span class="k">data</span>: [<span class="s">postgresql</span>, <span class="s">mysql</span>, <span class="s">alloydb</span>, <span class="s">redis</span>, <span class="s">opensearch</span>, <span class="s">kafka</span>, <span class="s">pubsub</span>, <span class="s">sqs</span>, <span class="s">cdc</span>]
+<span class="k">realtime</span>: [<span class="s">webrtc</span>, <span class="s">livekit</span>, <span class="s">sfu</span>, <span class="s">live-streaming</span>, <span class="s">recording-pipelines</span>]
+<span class="k">ai</span>: [<span class="s">rag</span>, <span class="s">semantic-search</span>, <span class="s">embeddings</span>, <span class="s">vector-search</span>, <span class="s">llm-integration</span>, <span class="s">claude-api</span>]
+<span class="k">practices</span>: [<span class="s">distributed-systems</span>, <span class="s">system-design</span>, <span class="s">microservices</span>, <span class="s">incident-response</span>]
+<span class="k">tools</span>: [<span class="s">git</span>, <span class="s">postman</span>, <span class="s">sidekiq</span>, <span class="s">jira</span>]</pre>
+  </section>
+
+  <section id="projects" aria-labelledby="h-proj">
+    <p class="cmd" id="h-proj"><span class="ps">$</span> kubectl get projects -n <span class="path">side</span> -o wide</p>
+    <div class="tbl"><table>
+      <thead><tr><th>NAME</th><th>STACK</th><th>STATUS</th><th>NOTES</th></tr></thead>
+      <tbody>
+        <tr><td>videosummarizer</td><td>Python, Django, PostgreSQL, Gemini API</td><td class="s">Running</td><td>Extracts and summarizes key insights from video transcripts with Gemini Pro. JWT auth, Postgres-backed user data.</td></tr>
+        <tr><td>cryptoballot</td><td>Solidity, Ethereum, Web3.js</td><td class="s">Running</td><td>Decentralized voting protocol on smart contracts for tamper-proof results. Refactor cut gas use by 25%.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="log" aria-labelledby="h-log">
+    <p class="cmd" id="h-log"><span class="ps">$</span> tail <span class="path">/var/log/eshan/events.log</span></p>
+<pre class="out wrap"><span class="d">2025</span> <span class="n">AWARD</span>  Bravo Award for the critical AWS → GCP migration, delivered in 10 days
+<span class="d">2023</span> <span class="k">EDU</span>    B.Tech, Information Technology, Bharati Vidyapeeth University, Pune · GPA <span class="n">8.9/10</span> <span class="d">(2019–2023)</span></pre>
+  </section>
+
+  <section id="offhours" aria-labelledby="h-off">
+    <p class="cmd" id="h-off"><span class="ps">$</span> ps aux | grep <span class="path">off-hours</span> <span class="c"># when the pager is quiet</span></p>
+<pre class="out"><span class="d">USER    PID  %CPU  STAT  COMMAND</span>
+eshan   <span class="n">1101</span>  <span class="n">97.0</span>  <span class="s">R</span>     <span class="k">skyrim</span> --dragonborn --one-more-quest
+eshan   <span class="n">1007</span>  <span class="n">64.0</span>  <span class="s">R</span>     <span class="k">james-bond</span> --licence-to-kill
+eshan   <span class="n">2048</span>  <span class="n">42.0</span>  <span class="s">S</span>     <span class="k">read</span> --books</pre>
+  </section>
+
+  <section id="contact" aria-labelledby="h-contact">
+    <p class="cmd" id="h-contact"><span class="ps">$</span> cat <span class="path">~/.contact</span></p>
+<pre class="out wrap"><span class="k">email</span>   <span id="email">pandeyeshan13@gmail.com</span>  <button type="button" id="copy" class="copybtn">[copy]</button>
+<span class="k">github</span>  <a href="https://github.com/eshanpandey" target="_blank" rel="noopener">github.com/eshanpandey</a>
+<span class="k">based</span>   Bangalore, India</pre>
+  </section>
+
+  <section id="shell" aria-labelledby="h-shell">
+    <p class="cmd" id="h-shell"><span class="ps">$</span> ./eshan-cli <span class="c"># try it: type help</span></p>
+    <div class="shell">
+      <pre id="hist" aria-live="polite"><span class="d">eshan-cli v1.0 · type </span><span class="n">help</span><span class="d"> for commands</span></pre>
+      <form class="line" id="f" autocomplete="off">
+        <label for="cmd">guest@eshan:~$</label>
+        <input id="cmd" type="text" spellcheck="false" autocapitalize="off" aria-label="Command">
+      </form>
+      <div class="chips" id="chips">
+        <button type="button">help</button><button type="button">whoami</button><button type="button">stack</button><button type="button">migrations</button><button type="button">oncall</button><button type="button">projects</button><button type="button">offhours</button><button type="button">contact</button><button type="button">clear</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>static html · no frameworks · 0 dependencies</span>
+  <span>© Eshan Pandey</span>
+</footer>
+
+<style>.copybtn{font:12px var(--mono);background:none;border:0;color:var(--dim);cursor:pointer;padding:0}.copybtn:hover,.copybtn:focus-visible{color:var(--amber)}</style>
+<script>
+(() => {
+  const clock = document.getElementById('clock');
+  const tick = () => {
+    try {
+      clock.textContent = new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Kolkata',hour12:false}) + ' IST';
+    } catch (e) { clock.textContent = ''; }
+  };
+  tick(); setInterval(tick, 1000);
+
+  const copy = document.getElementById('copy');
+  copy.addEventListener('click', () => {
+    const text = document.getElementById('email').textContent;
+    const done = () => { copy.textContent = '[copied]'; setTimeout(() => copy.textContent = '[copy]', 1500); };
+    const fallback = () => {
+      const r = document.createRange(); r.selectNodeContents(document.getElementById('email'));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r); copy.textContent = '[selected]';
+    };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+  });
+
+  const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const C = {
+    help: () => `<span class="n">commands</span>
+  whoami       who is this
+  stack        what I run in production
+  migrations   the big moves
+  oncall       pager duty record
+  projects     side projects
+  offhours     what I do when not on-call
+  contact      how to reach me
+  sudo         try it
+  clear        clear the screen`,
+    whoami: () => `Eshan Pandey · platform &amp; backend engineer @ Learnyst · Bangalore
+3 years on AWS + GCP. Go, Ruby on Rails, Kubernetes, WebRTC.`,
+    stack: () => `<span class="k">lang</span>    go ruby js python sql solidity
+<span class="k">infra</span>   gke helm docker ecs lambda linode
+<span class="k">data</span>    postgres mysql alloydb redis opensearch kafka pubsub
+<span class="k">rt</span>      webrtc livekit sfu
+<span class="k">ai</span>      rag embeddings vector-search claude-api`,
+    migrations: () => `<span class="s">✔</span> mysql → postgresql   (core app db, CDC via DataStream/Dataflow/Pub/Sub)
+<span class="s">✔</span> aws → gcp            (opensearch + lambda, 10-day window, Bravo Award)
+<span class="s">✔</span> vms → gke            (services + async workers, helm)`,
+    oncall: () => `incidents handled: API downtime, database issues, failed deploys
+<span class="k">mttr</span>  <span class="n">-40%</span> after CloudWatch monitoring for Sidekiq
+<span class="k">deploy</span> <span class="n">-60%</span> time after ECS + CodePipeline automation`,
+    projects: () => `<span class="n">videosummarizer</span>  django + postgres + gemini, jwt auth
+<span class="n">cryptoballot</span>     solidity voting protocol, -25% gas`,
+    contact: () => `email   pandeyeshan13@gmail.com
+github  <a href="https://github.com/eshanpandey" target="_blank" rel="noopener">github.com/eshanpandey</a>`,
+    sudo: () => `<span class="r">guest is not in the sudoers file. This incident will be reported.</span>`,
+    ls: () => `whoami  stack  migrations  oncall  projects  offhours  contact`,
+    offhours: () => `<span class="k">games</span>  Skyrim, James Bond
+<span class="k">books</span>  reading whenever I can`,
+    exit: () => `<span class="d">there is no exit. only on-call.</span>`,
+  };
+  const hist = document.getElementById('hist'), input = document.getElementById('cmd');
+  const past = []; let idx = 0;
+  const run = raw => {
+    const cmd = raw.trim(); if (!cmd) return;
+    past.push(cmd); idx = past.length;
+    const name = cmd.split(/\s+/)[0].toLowerCase();
+    if (name === 'clear') { hist.innerHTML = ''; return; }
+    const out = C[name] ? C[name]() : `<span class="r">command not found: ${esc(name)}</span> <span class="d">(try help)</span>`;
+    hist.innerHTML += `\n<span class="s">guest@eshan:~$</span> ${esc(cmd)}\n${out}`;
+    hist.scrollTop = hist.scrollHeight;
+  };
+  document.getElementById('f').addEventListener('submit', e => { e.preventDefault(); run(input.value); input.value = ''; });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp' && idx > 0) { input.value = past[--idx]; e.preventDefault(); }
+    if (e.key === 'ArrowDown') { idx = Math.min(past.length, idx + 1); input.value = past[idx] || ''; e.preventDefault(); }
+  });
+  document.getElementById('chips').addEventListener('click', e => { if (e.target.tagName === 'BUTTON') run(e.target.textContent); });
+})();
+</script>
+
+</body>
+</html>
